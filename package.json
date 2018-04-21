@@ -11,14 +11,14 @@
     "pimoroni",
     "blinkt"
   ],
-  "homepage": "https://github.com/mozilla-iot/blinkt-adapter",
+  "homepage": "https://github.com/pchri/blinkt-adapter",
   "license": "MPL-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mozilla-iot/blinkt-adapter.git"
+    "url": "https://github.com/pchri/blinkt-adapter"
   },
   "bugs": {
-    "url": "https://github.com/mozilla-iot/blinkt-adapter/issues"
+    "url": "https://github.com/pchri/blinkt-adapter/issues"
   },
   "dependencies": {
     "color": "^2.0.1",
