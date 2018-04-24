@@ -1,6 +1,6 @@
 {
   "name": "blinkt-adapter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Blinkt! adapter add-on for Mozilla IoT Gateway",
   "author": "Poul Christiansen",
   "main": "index.js",
@@ -23,17 +23,17 @@
   "dependencies": {
     "color": "^2.0.1",
     "onoff": "^1.2.0"
-  },  
+  },
   "files": [
     "LICENSE",
     "SHA256SUMS",
     "blinkt-adapter.js",
     "index.js",
-    "node_modules"    
+    "node_modules"
   ],
   "moziot": {
     "api": {
-      "min": 1,
+      "min": 2,
       "max": 2
     },
     "plugin": true,

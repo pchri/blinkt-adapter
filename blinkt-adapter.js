@@ -11,23 +11,12 @@
 const Gpio = require('onoff').Gpio;
 const Color = require('color');
 
-let Adapter, Constants, Device, Property;
-try {
-  Adapter = require('../adapter');
-  Constants = require('../addon-constants');
-  Device = require('../device');
-  Property = require('../property');
-} catch (e) {
-  if (e.code !== 'MODULE_NOT_FOUND') {
-    throw e;
-  }
-
-  const gwa = require('gateway-addon');
-  Adapter = gwa.Adapter;
-  Constants = gwa.Constants;
-  Device = gwa.Device;
-  Property = gwa.Property;
-}
+const {
+  Adapter,
+  Constants,
+  Device,
+  Property,
+} = require('gateway-addon');
 
 /**
  * Property of a Blinkt! device - ie a single RGB LED
