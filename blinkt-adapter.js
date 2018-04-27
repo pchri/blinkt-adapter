@@ -64,13 +64,13 @@ class BlinktDevice extends Device {
     this.properties.set('color',
       new BlinktProperty(this, 'color', {type: 'string'}, '#ffffff'));
     this.properties.set('level',
-      new BlinktProperty(this, 'level', {type: 'number'}, 50));11111
+      new BlinktProperty(this, 'level', {type: 'number'}, 50));
     this.adapter.handleDeviceAdded(this);
   }
 
   /**
    * When a property changes notify the Adapter to communicate with the Blinkt!
-   * TODO: batch property changes to not spam the Blinkt!
+   * Property changes are batched using a timer in the adapter.
    * @param {BlinktProperty} property
    */
   notifyPropertyChanged(property) {
@@ -100,6 +100,7 @@ class BlinktAdapter extends Adapter {
   constructor(adapterManager, packageName, bridgeId, bridgeIp) {
     super(adapterManager, 'blinkt-adapter', packageName);
     adapterManager.addAdapter(this);
+    this.pendingSend = false;
     this._gpio_setup();
     this.createDevices();
     this.sendProperties();
@@ -132,26 +133,19 @@ class BlinktAdapter extends Adapter {
     this.gpioCLK = new Gpio(24, 'out'); // BCM 24 // GPIO 5
   }
 
+  _write_bit(b) {
+    this.gpioDAT.writeSync(b);
+    this.gpioCLK.writeSync(1);
+    this.gpioCLK.writeSync(0);
+  }
+
   /**
    * _write_byte from blinkt.py
    */
   _write_byte(byte) {
     for (var x = 0; x < 8; x++) {
-      this.gpioDAT.writeSync(byte & 0b10000000 ? 1 : 0);
-      this.gpioCLK.writeSync(1);
+      this._write_bit(byte & 0b10000000 ? 1 : 0);
       byte = byte << 1;
-      this.gpioCLK.writeSync(0);      
-    }
-  }
-
-  /**
-   * _seframe common for _sof and _eof
-   */
-  _seframe(count) {
-    this.gpioDAT.writeSync(0);
-    for (var x = 0; x < count; x++) {
-      this.gpioCLK.writeSync(1);
-      this.gpioCLK.writeSync(0);
     }
   }
 
@@ -159,14 +153,18 @@ class BlinktAdapter extends Adapter {
    * _sof from blinkt.py
    */
   _sof() {
-    this._seframe(32);
+    for (var x = 0; x < 32; x++) {
+      this._write_bit(0);
+    }
   }
 
   /**
    * _eof from blinkt.py
    */
   _eof() {
-    this._seframe(36);
+    for (var x = 0; x < 36; x++) {
+      this._write_bit(0);
+    }
   }
 
   /**
@@ -184,11 +182,28 @@ class BlinktAdapter extends Adapter {
   }
 
   /**
-   * sendProperties - send all device properties to the Blinkt!
+   * sendProperties - schedule sending all device properties to the Blinkt!
+   * Property changes are batched using a timer to limit the number of times
+   * we actually send data to the Blinkt!
+   */
+  sendProperties() {
+    if (this.pendingSend) {
+      clearTimeout(this.timer);
+    }
+    this.pendingSend = true;
+    let obj = this;
+    this.timer = setTimeout(function() {
+      obj.doSendProperties();
+    }, 100);
+  }
+
+  /**
+   * doSendProperties - send all device properties to the Blinkt!
    * This is done by asking each device (LED) to send its own properties
    * inside a frame marked by _sof() and _eof()
    */
-  sendProperties() {
+  doSendProperties() {
+    this.pendingSend = false;
     this._sof();     
     for (var x = 0; x < 8; x++) {
       this.devices['blinkt-led-'+(x+1)].sendProperties();
