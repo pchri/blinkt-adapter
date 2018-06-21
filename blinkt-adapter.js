@@ -64,7 +64,7 @@ class BlinktDevice extends Device {
     this.properties.set('color',
       new BlinktProperty(this, 'color', {type: 'string'}, '#ffffff'));
     this.properties.set('level',
-      new BlinktProperty(this, 'level', {type: 'number'}, 50));
+      new BlinktProperty(this, 'level', {type: 'number'}, 8));
     this.adapter.handleDeviceAdded(this);
   }
 
