@@ -58,13 +58,41 @@ class BlinktDevice extends Device {
   constructor(adapter, id, name) {
     super(adapter, id);
     this.name = name;
+    this['@type'] = ['OnOffSwitch', 'Light', 'ColorControl'];
     this.type = Constants.THING_TYPE_DIMMABLE_COLOR_LIGHT;
-    this.properties.set('on',
-      new BlinktProperty(this, 'on', {type: 'boolean'}, false));
-    this.properties.set('color',
-      new BlinktProperty(this, 'color', {type: 'string'}, '#ffffff'));
-    this.properties.set('level',
-      new BlinktProperty(this, 'level', {type: 'number'}, 8));
+    this.properties.set(
+      'on',
+      new BlinktProperty(
+        this,
+        'on',
+        {
+          '@type': 'OnOffProperty',
+          label: 'On/Off',
+          type: 'boolean',
+        },
+        false));
+    this.properties.set(
+      'color',
+      new BlinktProperty(
+        this,
+        'color',
+        {
+          '@type': 'ColorProperty',
+          label: 'Color',
+          type: 'string',
+        },
+        '#ffffff'));
+    this.properties.set(
+      'level',
+      new BlinktProperty(
+        this,
+        'level',
+        {
+          '@type': 'BrightnessProperty',
+          label: 'Brightness',
+          type: 'number',
+        },
+        8));
     this.adapter.handleDeviceAdded(this);
   }
 
