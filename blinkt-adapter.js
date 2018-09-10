@@ -6,28 +6,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-console.log('Reading 1');
-
 'use strict';
 
-var g23;
-var g24;
-
-try {
-  const Gpio = require('onoff').Gpio;
-  g23 = new Gpio(23, 'out'); // BCM 23 // GPIO 4
-  g24 = new Gpio(24, 'out'); // BCM 24 // GPIO 5
-}
-catch (error) {
-  console.log('Caught error:', error);
-  console.error('Caught error:', error);
-}
-console.log('g23 is:', g23);
-console.log('Reading 1.5');
-
+const Gpio = require('onoff').Gpio;
 const Color = require('color');
-
-console.log('Reading 1.7');
 
 const {
   Adapter,
@@ -35,8 +17,6 @@ const {
   Device,
   Property,
 } = require('gateway-addon');
-
-console.log('Reading 2');
 
 /**
  * Property of a Blinkt! device - ie a single RGB LED
@@ -46,7 +26,6 @@ class BlinktProperty extends Property {
   constructor(device, name, descr, value) {
     super(device, name, descr);
     this.setCachedValue(value);
-    this.device.notifyPropertyChanged(this);
   }
 
   /**
@@ -56,20 +35,15 @@ class BlinktProperty extends Property {
    */
   setValue(value) {
     let changed = this.value !== value;
-    return new Promise((resolve, reject) => {
-      super.setValue(value).then((updatedValue) => {
-        resolve(updatedValue);
-        if (changed) {
-          this.device.notifyPropertyChanged(this);
-        }
-      }).catch((err) => {
-        reject(err);
-      });
+    return new Promise(resolve => {
+      this.setCachedValue(value);
+      resolve(this.value);
+      if (changed) {
+        this.device.notifyPropertyChanged(this);
+      }
     });
   }
 }
-
-console.log('Reading 3');
 
 /**
  * A single Blinkt! RGB LED
@@ -145,19 +119,15 @@ class BlinktDevice extends Device {
     this.adapter.sendDeviceProperties(lvl, cssc);
   }
 }
-console.log('Reading 4');
 
 /**
  * Blinkt! Adapter
  * Instantiates 8 BlinktDevices - one for each RGB LED
  */
 class BlinktAdapter extends Adapter {
-  constructor(adapterManager, packageName) {
-    console.log('BlinktAdapter Construction 1');
+  constructor(adapterManager, packageName, bridgeId, bridgeIp) {
     super(adapterManager, 'blinkt-adapter', packageName);
-    console.log('BlinktAdapter Construction 2');
     adapterManager.addAdapter(this);
-    console.log('BlinktAdapter Construction 3');
     this.pendingSend = false;
     this._gpio_setup();
     this.createDevices();
@@ -269,22 +239,9 @@ class BlinktAdapter extends Adapter {
     this._eof();
   }
 }
-console.log('Reading 5');
 
 function loadBlinktAdapter(addonManager, manifest, _errorCallback) {
-  try {
-    console.log('In loadBlinktAdapter');
-    const adapter = new BlinktAdapter(addonManager, manifest.name);
-    console.log('Out loadBlinktAdapter');
-  }
-  catch (error) {
-    console.log('Caught load error:', error);
-    console.log('Gpio is :', Gpio);
-  }
+  const adapter = new BlinktAdapter(addonManager, manifest.name);
 }
 
-console.log('Reading 6');
-
 module.exports = loadBlinktAdapter;
-
-console.log('Reading 7');
