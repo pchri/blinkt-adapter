@@ -8,4 +8,8 @@
 
 'use strict';
 
+console.log('ModuleExports 1');
+
 module.exports = require('./blinkt-adapter');
+
+console.log('ModuleExports 2');

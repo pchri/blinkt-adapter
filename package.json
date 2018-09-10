@@ -1,7 +1,7 @@
 {
   "name": "blinkt-adapter",
   "display_name": "Pimoroni Blinkt!",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Blinkt! adapter add-on for Mozilla IoT Gateway",
   "author": "Poul Christiansen",
   "main": "index.js",
@@ -23,7 +23,10 @@
   },
   "dependencies": {
     "color": "^2.0.1",
-    "onoff": "^1.2.0"
+    "onoff": "^3.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1"
   },
   "files": [
     "LICENSE",
