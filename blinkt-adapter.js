@@ -26,6 +26,7 @@ class BlinktProperty extends Property {
   constructor(device, name, descr, value) {
     super(device, name, descr);
     this.setCachedValue(value);
+    this.device.notifyPropertyChanged(this);
   }
 
   /**
@@ -35,12 +36,15 @@ class BlinktProperty extends Property {
    */
   setValue(value) {
     let changed = this.value !== value;
-    return new Promise(resolve => {
-      this.setCachedValue(value);
-      resolve(this.value);
-      if (changed) {
-        this.device.notifyPropertyChanged(this);
-      }
+    return new Promise((resolve, reject) => {
+      super.setValue(value).then((updatedValue) => {
+        resolve(updatedValue);
+        if (changed) {
+          this.device.notifyPropertyChanged(this);
+        }
+      }).catch((err) => {
+        reject(err);
+      });
     });
   }
 }
@@ -125,7 +129,7 @@ class BlinktDevice extends Device {
  * Instantiates 8 BlinktDevices - one for each RGB LED
  */
 class BlinktAdapter extends Adapter {
-  constructor(adapterManager, packageName, bridgeId, bridgeIp) {
+  constructor(adapterManager, packageName) {
     super(adapterManager, 'blinkt-adapter', packageName);
     adapterManager.addAdapter(this);
     this.pendingSend = false;
