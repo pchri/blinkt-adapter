@@ -13,7 +13,6 @@ const Color = require('color');
 
 const {
   Adapter,
-  Constants,
   Device,
   Property,
 } = require('gateway-addon');
@@ -63,7 +62,6 @@ class BlinktDevice extends Device {
     super(adapter, id);
     this.name = name;
     this['@type'] = ['OnOffSwitch', 'Light', 'ColorControl'];
-    this.type = Constants.THING_TYPE_DIMMABLE_COLOR_LIGHT;
     this.properties.set(
       'on',
       new BlinktProperty(
