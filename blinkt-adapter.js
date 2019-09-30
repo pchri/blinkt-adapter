@@ -8,8 +8,9 @@
 
 'use strict';
 
-const Gpio = require('onoff').Gpio;
 const Color = require('color');
+const Gpio = require('onoff').Gpio;
+const manifest = require('./manifest.json');
 
 const {
   Adapter,
@@ -127,8 +128,8 @@ class BlinktDevice extends Device {
  * Instantiates 8 BlinktDevices - one for each RGB LED
  */
 class BlinktAdapter extends Adapter {
-  constructor(adapterManager, packageName) {
-    super(adapterManager, 'blinkt-adapter', packageName);
+  constructor(adapterManager) {
+    super(adapterManager, manifest.id, manifest.id);
     adapterManager.addAdapter(this);
     this.pendingSend = false;
     this._gpio_setup();
@@ -242,8 +243,8 @@ class BlinktAdapter extends Adapter {
   }
 }
 
-function loadBlinktAdapter(addonManager, manifest, _errorCallback) {
-  const adapter = new BlinktAdapter(addonManager, manifest.name);
+function loadBlinktAdapter(addonManager) {
+  const adapter = new BlinktAdapter(addonManager);
 }
 
 module.exports = loadBlinktAdapter;
