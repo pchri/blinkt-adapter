@@ -1,0 +1,19 @@
+{
+  "author": "Poul Christiansen",
+  "description": "Blinkt! adapter add-on for Mozilla IoT Gateway",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{nodeLoader} {path}",
+      "primary_type": "adapter",
+      "strict_max_version": "*",
+      "strict_min_version": "0.10.0"
+    }
+  },
+  "homepage_url": "https://github.com/pchri/blinkt-adapter",
+  "id": "blinkt-adapter",
+  "license": "MPL-2.0",
+  "manifest_version": 1,
+  "name": "Pimoroni Blinkt!",
+  "short_name": "Blinkt!",
+  "version": "0.1.0"
+}
